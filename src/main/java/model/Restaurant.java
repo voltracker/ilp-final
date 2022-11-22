@@ -1,5 +1,7 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -9,6 +11,15 @@ import java.util.List;
  * @param lat latitude
  * @param menu list of MenuItems containing pizzas
  */
-public record Restaurant(String name, double lng, double lat, List<MenuItem> menu){
+public record Restaurant(
+        @JsonProperty("name")
+        String name,
+        @JsonProperty("longitude")
+        double lng,
+        @JsonProperty("latitude")
+        double lat,
+        @JsonProperty("menu")
+        List<MenuItem> menu
+){
 
 }
