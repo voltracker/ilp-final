@@ -3,13 +3,13 @@ package command;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import logging.Logger;
-import model.Order;
-import model.Restaurant;
+import model.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -79,14 +79,18 @@ public class RestClient {
         return null;
    }
 
-   public List<Object> getCentralArea(){
+   public Polygon getCentralArea(){
         Logger log = Logger.getInstance();
         try {
             URL url = new URL(baseURL + "centralArea");
-            List<Object> centralArea = new ObjectMapper()
+            List<CentralArea> centralArea = new ObjectMapper()
                     .readValue(url, new TypeReference<>() {});
             log.logAction("RestClient.getCentralArea()", LogStatus.GET_CENTRAL_AREA_SUCCESS);
-            return centralArea;
+            List<Point> points = new ArrayList<>();
+            for (CentralArea area : centralArea) {
+                points.add(new Point(area.lng(), area.lat()));
+            }
+            return new Polygon("CentralArea", points);
         } catch (IOException e){
             System.err.println(e);
             log.logAction("RestClient.getCentralArea()", LogStatus.IOEXCEPTION);
@@ -94,14 +98,22 @@ public class RestClient {
         return null;
    }
 
-    public List<Object> getNoFlyZones(){
+    public List<Polygon> getNoFlyZones(){
         Logger log = Logger.getInstance();
         try {
             URL url = new URL(baseURL + "noFlyZones");
-            List<Object> noFlyZones = new ObjectMapper()
+            List<NoFlyZone> noFlyZones = new ObjectMapper()
                     .readValue(url, new TypeReference<>() {});
             log.logAction("RestClient.getCentralArea()", LogStatus.GET_NO_FLY_ZONES_SUCCESS);
-            return noFlyZones;
+            List<Polygon> polygons = new ArrayList<>();
+            for (NoFlyZone nfz : noFlyZones) {
+                List<Point> vertices = new ArrayList<>();
+                for (List<Double> point : nfz.coordinates()) {
+                    vertices.add(new Point(point.get(0), point.get(1)));
+                }
+                polygons.add(new Polygon(nfz.name(), vertices));
+            }
+            return polygons;
         } catch (IOException e){
             System.err.println(e);
             log.logAction("RestClient.getCentralArea()", LogStatus.IOEXCEPTION);

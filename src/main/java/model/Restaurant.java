@@ -12,7 +12,7 @@ import java.util.List;
  * @param lat latitude
  * @param menu list of MenuItems containing pizzas
  */
-public record Restaurant(
+public record Restaurant (
         @JsonProperty("name")
         String name,
         @JsonProperty("longitude")
