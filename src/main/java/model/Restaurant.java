@@ -2,6 +2,7 @@ package model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,5 +22,11 @@ public record Restaurant(
         @JsonProperty("menu")
         List<MenuItem> menu
 ){
-
+        public List<String> getPizzaNames(){
+                List<String> pizzaNames = new ArrayList<>();
+                for (MenuItem menuItem : this.menu){
+                        pizzaNames.add(menuItem.name());
+                }
+                return pizzaNames;
+        }
 }

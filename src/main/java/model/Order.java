@@ -22,5 +22,4 @@ public record Order(
         @JsonProperty("orderItems")
         List<String> orderItems
 ) {
-
 }
