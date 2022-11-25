@@ -88,7 +88,7 @@ public class RestClient {
             log.logAction("RestClient.getCentralArea()", LogStatus.GET_CENTRAL_AREA_SUCCESS);
             List<Point> points = new ArrayList<>();
             for (CentralArea area : centralArea) {
-                points.add(new Point(area.lng(), area.lat()));
+                points.add(new Point(getCentralArea().getName(), area.lng(), area.lat()));
             }
             return new Polygon("CentralArea", points);
         } catch (IOException e){
@@ -109,7 +109,7 @@ public class RestClient {
             for (NoFlyZone nfz : noFlyZones) {
                 List<Point> vertices = new ArrayList<>();
                 for (List<Double> point : nfz.coordinates()) {
-                    vertices.add(new Point(point.get(0), point.get(1)));
+                    vertices.add(new Point(nfz.name(), point.get(0), point.get(1)));
                 }
                 polygons.add(new Polygon(nfz.name(), vertices));
             }

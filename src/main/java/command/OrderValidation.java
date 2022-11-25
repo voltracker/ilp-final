@@ -11,27 +11,37 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class OrderValidation {
 
+    private record pickupRestaurantOutcome(OrderOutcome outcome, Optional<Restaurant> restaurant){
+    }
+
     public static List<Delivery> process(List<Order> orders, List<Restaurant> restaurants){
         List<Delivery> deliveries = new ArrayList<>();
         for (Order order: orders) {
-            deliveries.add(new Delivery(order.orderNo(), validate(order, restaurants), order.orderTotal()));
+            var outcome = validate(order, restaurants);
+            if (outcome.restaurant().isPresent()){
+                deliveries.add(new Delivery(order.orderNo(), outcome.outcome(), outcome.restaurant().get(), order.orderTotal()));
+            } else {
+                deliveries.add(new Delivery(order.orderNo(), outcome.outcome(), null, order.orderTotal()));
+            }
+
         }
         return deliveries;
     }
 
-    private static OrderOutcome validate(Order order, List<Restaurant> restaurants){
+    private static pickupRestaurantOutcome validate(Order order, List<Restaurant> restaurants){
         if (!validCardNumber(order.creditCardNumber())){
-            return OrderOutcome.InvalidCardNumber;
+            return new pickupRestaurantOutcome(OrderOutcome.InvalidCardNumber, Optional.empty());
         }
         if (!validExpiryDate(order.creditCardExpiry())){
-            return OrderOutcome.InvalidExpiryDate;
+            return new pickupRestaurantOutcome(OrderOutcome.InvalidExpiryDate, Optional.empty());
         }
         if (!validCvv(order.cvv())){
-            return OrderOutcome.InvalidCvv;
+            return new pickupRestaurantOutcome(OrderOutcome.InvalidCvv, Optional.empty());
         }
         return checkPizzaOrder(order, restaurants);
     }
@@ -66,9 +76,9 @@ public class OrderValidation {
         return pattern.matcher(cvv).find();
     }
 
-    private static OrderOutcome checkPizzaOrder(Order order, List<Restaurant> restaurants){
+    private static pickupRestaurantOutcome checkPizzaOrder(Order order, List<Restaurant> restaurants){
     	if (order.orderItems().size() > 4 || order.orderItems().size() < 1){
-            return OrderOutcome.InvalidPizzaCount;
+            return new pickupRestaurantOutcome(OrderOutcome.InvalidPizzaCount, Optional.empty());
         }
 
         List<String> allPizzas = new ArrayList<>();
@@ -77,7 +87,7 @@ public class OrderValidation {
 	    }
 
         if (!allPizzas.containsAll(order.orderItems())){
-            return OrderOutcome.InvalidPizzaNotDefined;
+            return new pickupRestaurantOutcome(OrderOutcome.InvalidPizzaNotDefined, Optional.empty());
         }
 
         int validRestaurants = 0;
@@ -90,7 +100,7 @@ public class OrderValidation {
             restaurantIndex++;
         }
         if (validRestaurants > 1){
-            return OrderOutcome.InvalidPizzaCombinationMultipleSuppliers;
+            return new pickupRestaurantOutcome(OrderOutcome.InvalidPizzaCombinationMultipleSuppliers, Optional.empty());
         } else {
             restaurantIndex--;
             for (String pizza : order.orderItems()){
@@ -101,9 +111,9 @@ public class OrderValidation {
                 }
             }
             if (deliveryCost != order.orderTotal()){
-                return OrderOutcome.InvalidTotal;
+                return new pickupRestaurantOutcome(OrderOutcome.InvalidTotal, Optional.empty());
             } else {
-                return OrderOutcome.ValidButNotDelivered;
+                return new pickupRestaurantOutcome(OrderOutcome.ValidButNotDelivered, Optional.of(restaurants.get(restaurantIndex)));
             }
         }
     }
