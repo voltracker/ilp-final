@@ -9,6 +9,7 @@ import model.Point;
 import model.Polygon;
 import model.Restaurant;
 
+import javax.sound.sampled.Line;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,29 +45,31 @@ public class VisibilityGraph {
     }
 
     public boolean doesLineIntersect(LineSegment line1, LineSegment line2){
-        return Line2D.linesIntersect(line1.p1().lat(), line1.p1().lng(),
-                line1.p2().lat(), line1.p2().lng(),
-                line2.p1().lat(), line2.p1().lng(),
-                line2.p2().lat(), line2.p2().lng());
+        boolean intersect = Line2D.linesIntersect(line1.p1().lng(), line1.p1().lat(),
+                line1.p2().lng(), line1.p2().lat(),
+                line2.p1().lng(), line2.p1().lat(),
+                line2.p2().lng(), line2.p2().lat());
+
+        if (line1.p1().equals(line2.p1()) || line1.p1().equals(line2.p2()) || line1.p2().equals(line2.p1()) || line1.p2().equals(line2.p2())){
+            return false;
+        } else {
+            return intersect;
+        }
     }
 
     public void addEdgesForPoint(Point p){
         for(Point node : visibilityGraph.nodes()){
-            if (node.name().equals(p.name())){
-                break;
-            }
-            LineSegment line = new LineSegment(p, node);
-            boolean intersection = false;
-            int currentNoFlySegment = 0;
-            while (!intersection && currentNoFlySegment < noFlySegments.size()){
-                if (doesLineIntersect(line, noFlySegments.get(currentNoFlySegment))){
-                    intersection = true;
-                } else {
-                    currentNoFlySegment++;
+            if (!node.name().equals(p.name())){
+                LineSegment line = new LineSegment(p, node);
+                boolean intersect = false;
+                for (LineSegment segment : noFlySegments){
+                    if (doesLineIntersect(segment, line)){
+                        intersect = true;
+                    }
                 }
-            }
-            if (!intersection){
-                visibilityGraph.putEdgeValue(p, node, p.distanceTo(node));
+                if (!intersect) {
+                    visibilityGraph.putEdgeValue(p, node, p.distanceTo(node));
+                }
             }
         }
     }

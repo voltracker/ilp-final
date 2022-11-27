@@ -10,4 +10,7 @@ public record Point(String name, double lng, double lat) {
     public String toString(){
         return "(" + this.lng + "," + this.lat + ")";
     }
+    public boolean equals(Point p){
+        return (this.lng() == p.lng() && this.lat() == p.lat());
+    }
 }
