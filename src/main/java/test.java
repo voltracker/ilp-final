@@ -18,17 +18,14 @@ public class test {
         List<Polygon> nfz = cli.getNoFlyZones();
         List<Restaurant> restaurants = cli.getRestaurants();
         List<Order> orders = cli.getOrders("2023-01-02");
-       // List<Delivery> deliveries = OrderValidation.process(orders, restaurants);
-        //for (Delivery delivery : deliveries) {
-       //     System.out.println(delivery.outcome());
-       // }
+        List<Delivery> deliveries = OrderValidation.process(orders, restaurants);
+        for (Delivery delivery : deliveries) {
+            System.out.println(delivery.outcome());
+        }
         VisibilityGraph graph = new VisibilityGraph(nfz, restaurants);
         graph.buildGraph();
         MutableValueGraph<Point, Double> outGraph = graph.getGraph();
         var points = outGraph.nodes().stream().toList();
-        for (Point point : points) {
-            System.out.println(point.name());
-        }
         var edges = outGraph.edges();
         var outputEdges = new ArrayList<LineSegment>();
         for(EndpointPair edge : edges){

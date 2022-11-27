@@ -90,33 +90,46 @@ public class OrderValidation {
             return new pickupRestaurantOutcome(OrderOutcome.InvalidPizzaNotDefined, Optional.empty());
         }
 
-        int validRestaurants = 0;
-        int restaurantIndex = 0;
-        int deliveryCost = 100;
-        while (restaurantIndex < restaurants.size() && validRestaurants <= 1){
-            if (restaurants.get(restaurantIndex).getPizzaNames().containsAll(order.orderItems())){
-                validRestaurants += 1;
-            }
-            restaurantIndex++;
+        int totalOfAllPizzas = 0;
+        for (String pizza : order.orderItems()) {
+            totalOfAllPizzas += allPizzas.stream()
+                    .filter(a -> a.equals(pizza))
+                    .toList().size();
         }
-        if (validRestaurants > 1){
+
+        if (totalOfAllPizzas >= 2 * order.orderItems().size()) {
             return new pickupRestaurantOutcome(OrderOutcome.InvalidPizzaCombinationMultipleSuppliers, Optional.empty());
-        } else {
-            restaurantIndex--;
-            for (String pizza : order.orderItems()){
-                for(MenuItem item : restaurants.get(restaurantIndex).menu()){
-                    if (Objects.equals(pizza, item.name())){
+        }
+        int deliveryCost = 100;
+        int restaurantIndex = 0;
+        boolean found = false;
+
+        while (restaurantIndex < restaurants.size() && !found) {
+            if (restaurants.get(restaurantIndex).getPizzaNames().containsAll(order.orderItems())) {
+                found = true;
+            } else {
+                restaurantIndex++;
+            }
+        }
+        if(found){
+            for (String pizza : order.orderItems()) {
+                for (MenuItem item : restaurants.get(restaurantIndex).menu()) {
+                    if (item.name().equals(pizza)) {
                         deliveryCost += item.price();
                     }
-                }
+                 }
             }
-            if (deliveryCost != order.orderTotal()){
-                return new pickupRestaurantOutcome(OrderOutcome.InvalidTotal, Optional.empty());
+
+            if (deliveryCost != order.orderTotal()) {
+              return new pickupRestaurantOutcome(OrderOutcome.InvalidTotal, Optional.empty());
             } else {
-                return new pickupRestaurantOutcome(OrderOutcome.ValidButNotDelivered, Optional.of(restaurants.get(restaurantIndex)));
-            }
+             return new pickupRestaurantOutcome(OrderOutcome.ValidButNotDelivered, Optional.of(restaurants.get(restaurantIndex)));
+         }
+        } else {
+            return new pickupRestaurantOutcome(OrderOutcome.Invalid, Optional.empty());
         }
     }
+
 
     // TODO: implement luhn algorithm
     private boolean luhnCheck(String cardNumber){
