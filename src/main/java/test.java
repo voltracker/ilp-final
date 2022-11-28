@@ -7,6 +7,7 @@ import command.RestClient;
 import logging.LogItem;
 import logging.Logger;
 import model.*;
+import pathfinding.AStar;
 import pathfinding.VisibilityGraph;
 
 import java.util.ArrayList;
@@ -17,11 +18,11 @@ public class test {
         RestClient cli = new RestClient("https://ilp-rest.azurewebsites.net");
         List<Polygon> nfz = cli.getNoFlyZones();
         List<Restaurant> restaurants = cli.getRestaurants();
-        List<Order> orders = cli.getOrders("2023-01-02");
+        List<MenuItem> menu = new ArrayList<>();
+        menu.add(new MenuItem("swag", 2000));
+        restaurants.add(new Restaurant("Matthew's Pizzeria", -3.187461675406197, 55.945243692575374, menu));
+        List<Order> orders = cli.getOrders("2023-01-04");
         List<Delivery> deliveries = OrderValidation.process(orders, restaurants);
-        for (Delivery delivery : deliveries) {
-            System.out.println(delivery.outcome());
-        }
         VisibilityGraph graph = new VisibilityGraph(nfz, restaurants);
         graph.buildGraph();
         MutableValueGraph<Point, Double> outGraph = graph.getGraph();
@@ -31,6 +32,14 @@ public class test {
         for(EndpointPair edge : edges){
             outputEdges.add(new LineSegment((Point) edge.nodeU(), (Point) edge.nodeV()));
         }
-        GeoJsonWriter.writeVisGraph(points, outputEdges);
+        List<LineSegment> endPath = new ArrayList<>();
+        var goals = graph.getGoals();
+        for (Point goal : goals) {
+            if (!goal.name().equals("Appleton Tower")){
+                endPath.addAll(AStar.AStar(goals.get(goals.size()-1), goal, graph.getGraph()));
+            }
+        }
+        endPath.addAll(graph.getNoFlySegments());
+        GeoJsonWriter.writeVisGraph(points, endPath);
     }
 }

@@ -80,6 +80,14 @@ public class VisibilityGraph {
         }
     }
 
+    public List<LineSegment> getNoFlySegments(){
+        return noFlySegments;
+    }
+
+    public List<Point> getGoals() {
+        return goals;
+    }
+
     public MutableValueGraph getGraph(){
         return visibilityGraph;
     }

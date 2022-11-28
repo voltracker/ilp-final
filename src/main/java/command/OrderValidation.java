@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -56,7 +55,6 @@ public class OrderValidation {
 
     private static boolean validExpiryDate(String expiryDate){
         Logger log = Logger.getInstance();
-        System.out.println(expiryDate);
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
             YearMonth expiry = YearMonth.parse(expiryDate, formatter);
