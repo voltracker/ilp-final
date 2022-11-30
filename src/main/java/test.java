@@ -13,7 +13,7 @@ import pathfinding.VisibilityGraph;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pathfinding.LineApproximation.approximateSegment;
+import static pathfinding.LineApproximation.approximatePath;
 
 public class test {
     public static void main(String[] args){
@@ -37,10 +37,16 @@ public class test {
         List<LineSegment> endPath = new ArrayList<>();
         Point appleton = new Point("Appleton Tower", -3.186874, 55.944494);
         var goals = graph.getGoals();
-        List<LineSegment> pathToAppleton = AStar.AStar(appleton, goals.get(1), outGraph);
-        List<LineSegment> approx = approximateSegment(pathToAppleton.get(0), graph.getNoFlySegments());
+        List<List<LineSegment>> lines = new ArrayList<>();
+        for(var goal : goals){
+            lines.add(AStar.AStar(goal, appleton, outGraph));
+        }
+
+        for(var line : lines){
+            endPath.addAll(approximatePath(line, nfz));
+        }
+
         endPath.addAll(graph.getNoFlySegments());
-        endPath.addAll(approx);
         GeoJsonWriter.writeVisGraph(points, endPath);
     }
 }

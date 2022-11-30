@@ -30,6 +30,13 @@ public class Polygon {
         return segments;
     }
 
+    public com.mapbox.geojson.Polygon getAsMapboxPolygon(){
+        var mbPoints = this.points.stream().map(p -> com.mapbox.geojson.Point.fromLngLat(p.lng(), p.lat())).toList();
+        List<List<com.mapbox.geojson.Point>> mbListList = new ArrayList<>();
+        mbListList.add(mbPoints);
+        return com.mapbox.geojson.Polygon.fromLngLats(mbListList);
+    }
+
     @Override
     public String toString(){
         String out = "";
