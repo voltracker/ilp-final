@@ -13,6 +13,8 @@ import pathfinding.VisibilityGraph;
 import java.util.ArrayList;
 import java.util.List;
 
+import static pathfinding.LineApproximation.approximateSegment;
+
 public class test {
     public static void main(String[] args){
         RestClient cli = new RestClient("https://ilp-rest.azurewebsites.net");
@@ -33,13 +35,12 @@ public class test {
             outputEdges.add(new LineSegment((Point) edge.nodeU(), (Point) edge.nodeV()));
         }
         List<LineSegment> endPath = new ArrayList<>();
+        Point appleton = new Point("Appleton Tower", -3.186874, 55.944494);
         var goals = graph.getGoals();
-        for (Point goal : goals) {
-            if (!goal.name().equals("Appleton Tower")){
-                endPath.addAll(AStar.AStar(goals.get(goals.size()-1), goal, graph.getGraph()));
-            }
-        }
+        List<LineSegment> pathToAppleton = AStar.AStar(appleton, goals.get(1), outGraph);
+        List<LineSegment> approx = approximateSegment(pathToAppleton.get(0), graph.getNoFlySegments());
         endPath.addAll(graph.getNoFlySegments());
+        endPath.addAll(approx);
         GeoJsonWriter.writeVisGraph(points, endPath);
     }
 }

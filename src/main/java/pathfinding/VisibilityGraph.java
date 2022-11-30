@@ -40,11 +40,11 @@ public class VisibilityGraph {
             visibilityGraph.addNode(point);
         }
         Point appleton = new Point("Appleton Tower", -3.186874, 55.944494);
-        goals.add(appleton);
+        //goals.add(appleton);
         visibilityGraph.addNode(appleton);
     }
 
-    public boolean doesLineIntersect(LineSegment line1, LineSegment line2){
+    public static boolean doesLineIntersect(LineSegment line1, LineSegment line2){
         boolean intersect = Line2D.linesIntersect(line1.p1().lng(), line1.p1().lat(),
                 line1.p2().lng(), line1.p2().lat(),
                 line2.p1().lng(), line2.p1().lat(),
