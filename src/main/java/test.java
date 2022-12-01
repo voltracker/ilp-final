@@ -47,7 +47,7 @@ public class test {
             endPath.addAll(approximatePath(line, nfz));
         }
 
-        endPath.addAll(graph.getNoFlySegments());
         GeoJsonWriter.writeVisGraph(points, endPath);
+        GeoJsonWriter.writeNoFlyZones(nfz.stream().map(Polygon::getAsMapboxPolygon).toList());
     }
 }

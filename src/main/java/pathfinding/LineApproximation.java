@@ -23,6 +23,9 @@ public class LineApproximation {
             List<Point> possibleMoves = Arrays.stream(directions)
                     .map(finalCurrent::makeMove).toList();
 
+            //TODO: make sure that there is a "betterMove or a valid Move"
+            //TODO: if there isn't, go back and find the next best move
+            //boolean bestMoveFound
             var bestMove = possibleMoves.get(0);
             for (Point move : possibleMoves) {
                 if (move.distanceTo(end) < bestMove.distanceTo(end)){
@@ -33,7 +36,7 @@ public class LineApproximation {
                         var isInside = inside(
                                 com.mapbox.geojson.Point.fromLngLat(move.lng(), move.lat()),
                                 nfz.getAsMapboxPolygon());
-                        if (isInside || moreThanOneOccurrence(moves, move)){
+                        if (doesIntersect || isInside || moreThanOneOccurrence(moves, move)){
                             valid = false;
                         }
                     }
@@ -70,7 +73,7 @@ public class LineApproximation {
 
     private static boolean moreThanOneOccurrence(List<Point> moves, Point newMove){
         int occurrences = moves.stream().filter(p -> p.equals(newMove)).toList().size();
-        return occurrences >= 1;
+        return occurrences > 1;
     }
 
     public static List<LineSegment> approximatePath(List<LineSegment> exactPath, List<Polygon> noFlyZones){
