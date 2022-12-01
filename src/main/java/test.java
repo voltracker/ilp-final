@@ -44,7 +44,8 @@ public class test {
         }
 
         for(var line : lines){
-            endPath.addAll(approximatePath(line, nfz));
+            var droneMoves = approximatePath(line, nfz);
+            endPath.addAll(droneMoves.stream().map(p -> new LineSegment(p.from(), p.to())).toList());
         }
 
         GeoJsonWriter.writeVisGraph(points, endPath);
