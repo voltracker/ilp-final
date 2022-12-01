@@ -40,6 +40,7 @@ public class test {
         List<List<LineSegment>> lines = new ArrayList<>();
         for(var goal : goals){
             lines.add(AStar.AStar(goal, appleton, outGraph));
+            lines.add(AStar.AStar(appleton, goal, outGraph));
         }
 
         for(var line : lines){

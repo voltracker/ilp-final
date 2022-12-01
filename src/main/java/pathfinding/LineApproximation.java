@@ -26,13 +26,18 @@ public class LineApproximation {
             var bestMove = possibleMoves.get(0);
             for (Point move : possibleMoves) {
                 if (move.distanceTo(end) < bestMove.distanceTo(end)){
-                    boolean inside = false;
+                    boolean valid = true;
                     for (Polygon nfz : noFlyZones) {
-                        if (inside(com.mapbox.geojson.Point.fromLngLat(move.lng(), move.lat()), nfz.getAsMapboxPolygon())){
-                            inside = true;
+                        var segment = new LineSegment(move, finalCurrent);
+                        var doesIntersect = intersectsNoFlyZone(noFlyZones, segment);
+                        var isInside = inside(
+                                com.mapbox.geojson.Point.fromLngLat(move.lng(), move.lat()),
+                                nfz.getAsMapboxPolygon());
+                        if (isInside || moreThanOneOccurrence(moves, move)){
+                            valid = false;
                         }
                     }
-                    if (!inside){
+                    if (valid){
                         bestMove = move;
                     }
                 }
@@ -48,6 +53,24 @@ public class LineApproximation {
             path.add(new LineSegment(moves.get(i), moves.get(i+1)));
         }
         return path;
+    }
+
+    private static boolean intersectsNoFlyZone(List<Polygon> noFlyZones, LineSegment segment){
+        boolean intersect = false;
+        for (var noflyzone : noFlyZones){
+            List<LineSegment> edges = noflyzone.getLineSegments();
+            for (LineSegment edge : edges){
+                if (VisibilityGraph.doesLineIntersect(edge, segment)){
+                    intersect = true;
+                }
+            }
+        }
+        return intersect;
+    }
+
+    private static boolean moreThanOneOccurrence(List<Point> moves, Point newMove){
+        int occurrences = moves.stream().filter(p -> p.equals(newMove)).toList().size();
+        return occurrences >= 1;
     }
 
     public static List<LineSegment> approximatePath(List<LineSegment> exactPath, List<Polygon> noFlyZones){
