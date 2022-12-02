@@ -78,4 +78,14 @@ public class Restaurant {
         public List<DroneMove> getPathToAppleton() {
                 return pathToAppleton;
         }
+
+        public int getNumberOfMoves(){
+                return this.pathToAppleton.size() + this.pathFromAppleton.size() + 1;
+        }
+
+        @Override
+        public String toString(){
+                return this.name;
+        }
 }
+

@@ -6,9 +6,9 @@ import pathfinding.AStar;
 import pathfinding.LineApproximation;
 import pathfinding.VisibilityGraph;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DeliverOrders {
 
@@ -40,7 +40,41 @@ public class DeliverOrders {
     }
 
     public void deliver(){
-        
+        // add all restaurants to priority queue in order of moves required descending
+        PriorityQueue<Restaurant> restaurantQueue = new PriorityQueue<>(new RestaurantComparator());
+        restaurantQueue.addAll(this.restaurants);
+        System.out.println(restaurants.stream().map(Object::toString).toList());
+        // hashmap of restaurant name to delivery
+        Map<String, Delivery> deliveries = new HashMap<>();
+        // add orders that are valid but not delivered to hashmap
+        for (var order : orders){
+            if (order.outcome() == OrderOutcome.ValidButNotDelivered) {
+                deliveries.put(order.pickupRestaurant().name(), order);
+            }
+        }
+
+        orders.removeAll(orders.stream().filter(o -> o.outcome() == OrderOutcome.ValidButNotDelivered).collect(Collectors.toList()));
+
+        System.out.println(deliveries);
+
+        var totalMoves = 0;
+        var currentRestaurant = restaurantQueue.poll();
+        while (totalMoves + currentRestaurant.getNumberOfMoves() < 2000 && !restaurantQueue.isEmpty() && !deliveries.isEmpty()){
+
+            var currentDelivery = deliveries.remove(currentRestaurant.name());
+            totalMoves += currentRestaurant.getNumberOfMoves();
+            orders.add(new Delivery(currentDelivery.orderNo(), OrderOutcome.Delivered, currentRestaurant, currentDelivery.costInPence()));
+
+            System.out.println(deliveries.keySet());
+            System.out.println(currentRestaurant.name());
+
+            if (!deliveries.containsKey(currentRestaurant.name())){
+                currentRestaurant = restaurantQueue.poll();
+            }
+        }
+        orders.addAll(deliveries.values());
+
+        System.out.println(orders.size());
     }
 
     public void go(){
