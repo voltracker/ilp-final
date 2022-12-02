@@ -6,25 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Record to represent a restaurant
- * @param name name of restaurant
- * @param lng longitude
- * @param lat latitude
- * @param menu list of MenuItems containing pizzas
+ * class to represent a restaurant
  */
-public record Restaurant (
+public class Restaurant {
         @JsonProperty("name")
-        String name,
+        private String name;
         @JsonProperty("longitude")
-        double lng,
+        private double lng;
         @JsonProperty("latitude")
-        double lat,
+        private double lat;
         @JsonProperty("menu")
-        List<MenuItem> menu
-){
+        private List<MenuItem> menu;
+
         private List<DroneMove> pathToAppleton;
-        private List<>
-        }
+        private List<DroneMove> pathFromAppleton;
+
         public Restaurant(@JsonProperty("name")
                           String name,
                           @JsonProperty("longitude")
@@ -38,11 +34,48 @@ public record Restaurant (
                 this.lat = lat;
                 this.menu = menu;
         }
+
         public List<String> getPizzaNames(){
                 List<String> pizzaNames = new ArrayList<>();
                 for (MenuItem menuItem : this.menu){
                         pizzaNames.add(menuItem.name());
                 }
                 return pizzaNames;
+        }
+
+        public Point getPoint(){
+                return new Point(this.name, this.lng, this.lat);
+        }
+
+        public double lng(){
+                return lng;
+        }
+
+        public double lat(){
+                return lat;
+        }
+
+        public String name(){
+                return name;
+        }
+
+        public List<MenuItem> menu(){
+                return menu;
+        }
+
+        public void setPathToAppleton(List<DroneMove> pathToAppleton) {
+                this.pathToAppleton = pathToAppleton;
+        }
+
+        public void setPathFromAppleton(List<DroneMove> pathFromAppleton) {
+                this.pathFromAppleton = pathFromAppleton;
+        }
+
+        public List<DroneMove> getPathFromAppleton() {
+                return pathFromAppleton;
+        }
+
+        public List<DroneMove> getPathToAppleton() {
+                return pathToAppleton;
         }
 }

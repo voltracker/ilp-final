@@ -8,7 +8,7 @@ import java.util.*;
 
 public class AStar {
 
-    public static List<LineSegment> AStar(Point goal, Point startingPoint, MutableValueGraph<Point, Double> graph){
+    public static List<LineSegment> AStar(Point startingPoint, Point goal, MutableValueGraph<Point, Double> graph){
         List<Point> openList = new ArrayList<>();
         openList.add(startingPoint);
         Map<Point, Point> cameFrom = new HashMap<>();
