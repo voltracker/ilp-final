@@ -43,17 +43,21 @@ public class DeliverOrders {
         // add all restaurants to priority queue in order of moves required descending
         PriorityQueue<Restaurant> restaurantQueue = new PriorityQueue<>(new RestaurantComparator());
         restaurantQueue.addAll(this.restaurants);
-        System.out.println(restaurants.stream().map(Object::toString).toList());
         // hashmap of restaurant name to delivery
-        Map<String, Delivery> deliveries = new HashMap<>();
+        Map<String, List<Delivery>> deliveries = new HashMap<>();
         // add orders that are valid but not delivered to hashmap
         for (var order : orders){
             if (order.outcome() == OrderOutcome.ValidButNotDelivered) {
-                deliveries.put(order.pickupRestaurant().name(), order);
+                deliveries.computeIfAbsent(order.pickupRestaurant().name(), k -> new ArrayList<>());
+                deliveries.get(order.pickupRestaurant().name()).add(order);
             }
         }
 
+        System.out.println(orders.size());
+
         orders.removeAll(orders.stream().filter(o -> o.outcome() == OrderOutcome.ValidButNotDelivered).collect(Collectors.toList()));
+
+        System.out.println(orders.size());
 
         System.out.println(deliveries);
 
@@ -61,7 +65,10 @@ public class DeliverOrders {
         var currentRestaurant = restaurantQueue.poll();
         while (totalMoves + currentRestaurant.getNumberOfMoves() < 2000 && !restaurantQueue.isEmpty() && !deliveries.isEmpty()){
 
-            var currentDelivery = deliveries.remove(currentRestaurant.name());
+            var currentDelivery = deliveries.get(currentRestaurant.name()).remove(0);
+            if (deliveries.get(currentRestaurant.name()).isEmpty()){
+                deliveries.remove(currentRestaurant.name());
+            }
             totalMoves += currentRestaurant.getNumberOfMoves();
             orders.add(new Delivery(currentDelivery.orderNo(), OrderOutcome.Delivered, currentRestaurant, currentDelivery.costInPence()));
 
@@ -72,7 +79,8 @@ public class DeliverOrders {
                 currentRestaurant = restaurantQueue.poll();
             }
         }
-        orders.addAll(deliveries.values());
+
+        deliveries.values().stream().map(orders::addAll);
 
         System.out.println(orders.size());
     }
