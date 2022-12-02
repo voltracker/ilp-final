@@ -27,7 +27,11 @@ public class LineApproximation {
                 var segment = new LineSegment(move, current);
                 var doesIntersect = intersectsNoFlyZone(noFlyZones, segment);
                 var isInside = insideNoFlyZone(noFlyZones, move);
-                if (!(doesIntersect || isInside || moreThanOneOccurrence(moves, new DroneMove(current, move, angle.bearing)))) {
+                if (!(doesIntersect ||
+                        isInside ||
+                        moreThanOneOccurrence(moves, new DroneMove(current, move, angle.bearing)) ||
+                        badMoves.contains(new DroneMove(current, move, angle.bearing)))
+                ) {
                     validAngles.add(angle);
                 }
             }
