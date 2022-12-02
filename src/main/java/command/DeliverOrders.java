@@ -6,6 +6,7 @@ import pathfinding.AStar;
 import pathfinding.LineApproximation;
 import pathfinding.VisibilityGraph;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,10 +40,19 @@ public class DeliverOrders {
     }
 
     public void deliver(){
-        Map<Integer, Restaurant> 
+        Map<Integer, Restaurant> movesPerRestaurant = new HashMap<>();
+        for (var restaurant : restaurants){
+            movesPerRestaurant.put(restaurant.getPathFromAppleton().size()+restaurant.getPathToAppleton().size() + 1, restaurant);
+        }
+
+        var total = 0;
+        while(total < 2000){
+
+        }
     }
 
     public void go(){
         this.pathFind();
+        this.deliver();
     }
 }
