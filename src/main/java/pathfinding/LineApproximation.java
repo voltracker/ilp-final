@@ -5,6 +5,7 @@ import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.mapbox.turf.TurfJoins.inside;
 
@@ -14,7 +15,7 @@ public class LineApproximation {
 
         if (start == null || end == null || noFlyZones == null){
             logger.logAction("LineApproximation.approximateSegment(start, end, noFlyZones", LogStatus.LINE_APPROXIMATION_NULL_ARGUMENT);
-            return null;
+            return new ArrayList<>();
         }
 
         List<DroneMove> moves = new ArrayList<>();
@@ -99,10 +100,10 @@ public class LineApproximation {
         Logger logger = Logger.getInstance();
         if (exactPath == null || noFlyZones == null){
             logger.logAction("LineApproximation.approximatePath(exactPath, noFlyZones", LogStatus.LINE_APPROXIMATION_NULL_ARGUMENT);
-            return null;
+            return new ArrayList<>();
         }
 
-        List<DroneMove> approximatePath = new ArrayList<>(approximateSegment(exactPath.get(0).p1(), exactPath.get(0).p2(), noFlyZones));
+        List<DroneMove> approximatePath = new ArrayList<>(Objects.requireNonNull(approximateSegment(exactPath.get(0).p1(), exactPath.get(0).p2(), noFlyZones)));
         for (int i = 1; i < exactPath.size(); i++) {
             var prevEndPoint = approximatePath.get(approximatePath.size()-1).to();
             var segmentsToAdd = approximateSegment(prevEndPoint, exactPath.get(i).p2(), noFlyZones);

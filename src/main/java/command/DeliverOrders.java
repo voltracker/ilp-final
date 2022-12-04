@@ -53,7 +53,7 @@ public class DeliverOrders {
             }
         }
 
-        orders.removeAll(orders.stream().filter(o -> o.outcome() == OrderOutcome.ValidButNotDelivered).collect(Collectors.toList()));
+        orders.removeAll(orders.stream().filter(o -> o.outcome() == OrderOutcome.ValidButNotDelivered).toList());
 
         var totalMoves = 0;
         var currentRestaurant = restaurantQueue.poll();

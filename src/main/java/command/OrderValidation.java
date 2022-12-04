@@ -124,7 +124,7 @@ public class OrderValidation {
              return new pickupRestaurantOutcome(OrderOutcome.ValidButNotDelivered, Optional.of(restaurants.get(restaurantIndex)));
          }
         } else {
-            return new pickupRestaurantOutcome(OrderOutcome.Invalid, Optional.empty());
+            return new pickupRestaurantOutcome(OrderOutcome.InvalidPizzaCombinationMultipleSuppliers, Optional.empty());
         }
     }
 

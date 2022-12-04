@@ -73,16 +73,12 @@ public class Restaurant {
                 this.pathFromAppleton = pathFromAppleton;
         }
 
-        public List<DroneMove> getPathFromAppleton() {
-                return pathFromAppleton;
-        }
-
-        public List<DroneMove> getPathToAppleton() {
-                return pathToAppleton;
-        }
-
         public int getNumberOfMoves(){
-                return this.pathToAppleton.size() + this.pathFromAppleton.size() + 1;
+                if (this.pathFromAppleton == null || this.pathToAppleton == null){
+                        return -1;
+                } else {
+                        return this.pathToAppleton.size() + this.pathFromAppleton.size() + 1;
+                }
         }
 
         @Override
