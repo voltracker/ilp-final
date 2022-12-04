@@ -39,3 +39,6 @@ build/
 
 ## GeoJSON ##
 *.geojson
+
+## JSON ##
+*.json
