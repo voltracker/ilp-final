@@ -1,17 +1,22 @@
 package command;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.geojson.Polygon;
+import model.Delivery;
 import model.LineSegment;
+import model.OrderOutcome;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GeoJsonWriter {
     public static void writeVisGraph(List<model.Point> points, List<LineSegment> edges){
@@ -45,5 +50,15 @@ public class GeoJsonWriter {
       } catch (IOException e) {
         e.printStackTrace();
       }
+    }
+
+    public static void writeDeliveries(List<Delivery> deliveries){
+        System.out.println(deliveries.stream().filter(d -> d.outcome() == OrderOutcome.Delivered).collect(Collectors.toList()).size());
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(new File("deliveries.json"), deliveries);
+        } catch (IOException e){
+            System.err.println(e);
+        }
     }
 }

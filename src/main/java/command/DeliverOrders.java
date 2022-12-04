@@ -53,13 +53,7 @@ public class DeliverOrders {
             }
         }
 
-        System.out.println(orders.size());
-
         orders.removeAll(orders.stream().filter(o -> o.outcome() == OrderOutcome.ValidButNotDelivered).collect(Collectors.toList()));
-
-        System.out.println(orders.size());
-
-        System.out.println(deliveries);
 
         var totalMoves = 0;
         var currentRestaurant = restaurantQueue.poll();
@@ -71,18 +65,19 @@ public class DeliverOrders {
             }
             totalMoves += currentRestaurant.getNumberOfMoves();
             orders.add(new Delivery(currentDelivery.orderNo(), OrderOutcome.Delivered, currentRestaurant, currentDelivery.costInPence()));
-
-            System.out.println(deliveries.keySet());
-            System.out.println(currentRestaurant.name());
+            //System.out.println(deliveries.keySet());
+            //System.out.println(currentRestaurant.name());
 
             if (!deliveries.containsKey(currentRestaurant.name())){
                 currentRestaurant = restaurantQueue.poll();
             }
         }
 
-        deliveries.values().stream().map(orders::addAll);
-
-        System.out.println(orders.size());
+        for (var del : deliveries.values()){
+            orders.addAll(del);
+        }
+        System.out.println(totalMoves);
+        GeoJsonWriter.writeDeliveries(orders);
     }
 
     public void go(){
