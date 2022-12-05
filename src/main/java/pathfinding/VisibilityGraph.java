@@ -2,6 +2,7 @@ package pathfinding;
 
 import com.google.common.graph.MutableValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
+import logging.Logger;
 import model.LineSegment;
 import model.Point;
 import model.Polygon;
@@ -12,13 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VisibilityGraph {
-    private List<LineSegment> noFlySegments;
-    private List<Polygon> noFlyZones;
-    private List<Point> goals;
-    private MutableValueGraph<Point, Double> visibilityGraph = ValueGraphBuilder.undirected().allowsSelfLoops(true).build();
+    private final List<LineSegment> noFlySegments;
+    private final List<Point> goals;
+    private final MutableValueGraph<Point, Double> visibilityGraph = ValueGraphBuilder.undirected().allowsSelfLoops(true).build();
 
     public VisibilityGraph(List<Polygon> noFlyZones, List<Restaurant> restaurants){
-        this.noFlyZones = noFlyZones;
+        Logger logger = Logger.getInstance();
         noFlySegments = new ArrayList<>();
         for (Polygon noFlyZone : noFlyZones) {
             List<LineSegment> edges = noFlyZone.getLineSegments();
@@ -37,8 +37,9 @@ public class VisibilityGraph {
             visibilityGraph.addNode(point);
         }
         Point appleton = new Point("Appleton Tower", -3.186874, 55.944494);
-        //goals.add(appleton);
         visibilityGraph.addNode(appleton);
+        this.buildGraph();
+        logger.logAction("VisibilityGraph.VisibilityGraph(noFlyZones, restaurants)", LogStatus.VISIBILITY_GRAPH_BUILT);
     }
 
     public static boolean doesLineIntersect(LineSegment line1, LineSegment line2){
@@ -87,6 +88,10 @@ public class VisibilityGraph {
 
     public MutableValueGraph getGraph(){
         return visibilityGraph;
+    }
+
+    private enum LogStatus {
+        VISIBILITY_GRAPH_BUILT
     }
 
 }

@@ -1,6 +1,7 @@
 package pathfinding;
 
 import com.google.common.graph.MutableValueGraph;
+import logging.Logger;
 import model.LineSegment;
 import model.Point;
 
@@ -9,6 +10,7 @@ import java.util.*;
 public class AStar {
 
     public static List<LineSegment> AStar(Point startingPoint, Point goal, MutableValueGraph<Point, Double> graph){
+        Logger logger = Logger.getInstance();
         List<Point> openList = new ArrayList<>();
         openList.add(startingPoint);
         Map<Point, Point> cameFrom = new HashMap<>();
@@ -26,6 +28,7 @@ public class AStar {
             }
             Point n = fscore.get(minF);
             if (n.equals(goal)){
+                logger.logAction("AStar.AStar(startingPoint, goal, graph", LogStatus.ASTAR_PATH_FOUND);
                 return getPath(cameFrom, n);
             }
             openList.remove(n);
@@ -42,6 +45,7 @@ public class AStar {
                 }
             }
         }
+        logger.logAction("AStar.AStar(startingPoint, goal, graph", LogStatus.ASTAR_NO_PATH_TO_GOAL);
         return null;
     }
 
@@ -59,6 +63,11 @@ public class AStar {
             finalPath.add(new LineSegment(totalPath.get(i), totalPath.get(i-1)));
         }
         return finalPath;
+    }
+
+    private enum LogStatus{
+        ASTAR_PATH_FOUND,
+        ASTAR_NO_PATH_TO_GOAL,
     }
 
 }

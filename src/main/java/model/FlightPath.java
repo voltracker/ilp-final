@@ -4,8 +4,8 @@ public record FlightPath(
         String orderNo,
         double fromLongitude,
         double fromLatitude,
-        double angle,
+        Double angle,
         double toLongitude,
         double toLatitude,
-        int ticksSinceStartOfCalculation
+        long ticksSinceStartOfCalculation
 ) {}

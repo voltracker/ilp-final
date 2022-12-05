@@ -6,20 +6,22 @@ import pathfinding.AStar;
 import pathfinding.LineApproximation;
 import pathfinding.VisibilityGraph;
 
-import java.sql.Array;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DeliverOrders {
 
     private final List<Restaurant> restaurants;
     private final List<Delivery> orders;
     private final List<Polygon> noFlyZones;
+    private final String date;
 
+    private final long startingTick;
     private final Point appleton = new Point("Appleton Tower", -3.186874, 55.944494);
 
     public DeliverOrders(String date, String baseURL){
+        this.startingTick = System.nanoTime();
         RestClient cli = new RestClient(baseURL);
+        this.date = date;
         this.restaurants = cli.getRestaurants();
         this.orders = OrderValidation.process(cli.getOrders(date), restaurants);
         this.noFlyZones = cli.getNoFlyZones();
@@ -27,11 +29,10 @@ public class DeliverOrders {
 
     public void pathFind(){
         VisibilityGraph visGraph = new VisibilityGraph(this.noFlyZones, this.restaurants);
-        visGraph.buildGraph();
-        MutableValueGraph<Point, Double> outGraph = visGraph.getGraph();
+        MutableValueGraph outGraph = visGraph.getGraph();
         for (var restaurant : restaurants){
-            var from = AStar.AStar(appleton, restaurant.getPoint(), outGraph);
-            var to = AStar.AStar(restaurant.getPoint(), appleton, outGraph);
+            List<LineSegment> from = AStar.AStar(appleton, restaurant.getPoint(), outGraph);
+            List<LineSegment> to = AStar.AStar(restaurant.getPoint(), appleton, outGraph);
             assert from != null;
             restaurant.setPathFromAppleton(LineApproximation.approximatePath(from, this.noFlyZones));
             assert to != null;
@@ -40,6 +41,9 @@ public class DeliverOrders {
     }
 
     public void deliver(){
+        // initialise list of FlightPath moves
+        List<FlightPath> flightPath = new ArrayList<>();
+        List<LineSegment> droneMoves = new ArrayList<>();
         // add all restaurants to priority queue in order of moves required descending
         PriorityQueue<Restaurant> restaurantQueue = new PriorityQueue<>(new RestaurantComparator());
         restaurantQueue.addAll(this.restaurants);
@@ -65,9 +69,8 @@ public class DeliverOrders {
             }
             totalMoves += currentRestaurant.getNumberOfMoves();
             orders.add(new Delivery(currentDelivery.orderNo(), OrderOutcome.Delivered, currentRestaurant, currentDelivery.costInPence()));
-            //System.out.println(deliveries.keySet());
-            //System.out.println(currentRestaurant.name());
-
+            flightPath.addAll(currentRestaurant.generateFlightPath(currentDelivery.orderNo(), this.startingTick, this.appleton));
+            droneMoves.addAll(currentRestaurant.getDronePath());
             if (!deliveries.containsKey(currentRestaurant.name())){
                 currentRestaurant = restaurantQueue.poll();
             }
@@ -77,7 +80,9 @@ public class DeliverOrders {
             orders.addAll(del);
         }
         System.out.println(totalMoves);
-        GeoJsonWriter.writeDeliveries(orders);
+        JsonWriter.writeDeliveries(orders, date);
+        JsonWriter.writeFlightPathJSON(flightPath, date);
+        JsonWriter.writeFlightPathGJSON(droneMoves, date);
     }
 
     public void go(){
