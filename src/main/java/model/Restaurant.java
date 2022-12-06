@@ -24,6 +24,13 @@ public class Restaurant {
         private List<DroneMove> pathToAppleton;
         private List<DroneMove> pathFromAppleton;
 
+        /**
+         * Construct a Restaurant object
+         * @param name String containing name of restaurant
+         * @param lng double containing longitude of restaurant
+         * @param lat double containing latitude of restaurant
+         * @param menu List of MenuItems containing restaurant's menu
+         */
         public Restaurant(@JsonProperty("name")
                           String name,
                           @JsonProperty("longitude")
@@ -38,6 +45,10 @@ public class Restaurant {
                 this.menu = menu;
         }
 
+        /**
+         * gets the names of all the restaurant's menu items
+         * @return List of Strings
+         */
         public List<String> getPizzaNames(){
                 List<String> pizzaNames = new ArrayList<>();
                 for (MenuItem menuItem : this.menu){

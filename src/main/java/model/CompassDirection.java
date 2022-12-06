@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * enum containing possible directions the drone can travel
+ */
 public enum CompassDirection {
     /**
      * North
@@ -71,6 +74,10 @@ public enum CompassDirection {
      */
     public final double bearing;
 
+    /**
+     * get value of a compass direction as a double
+     * @param bearing double containing angle/bearing in degrees
+     */
     private CompassDirection(double bearing) {
         this.bearing = bearing;
     }
