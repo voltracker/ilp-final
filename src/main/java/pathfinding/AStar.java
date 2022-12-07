@@ -7,9 +7,21 @@ import model.Point;
 
 import java.util.*;
 
+/**
+ * Class used to path find on the visibility graph
+ * Adapted from the Wikipedia article on <a href="https://en.wikipedia.org/wiki/A*_search_algorithm">A*</a>
+ */
 public class AStar {
 
+    /**
+     * Implementation of the A* search algorithm, using the euclidean distance to the goal as the heuristic
+     * @param startingPoint Point to start from
+     * @param goal Point to find a path to
+     * @param graph MutableValueGraph from the Guava package
+     * @return List of LineSegment, representing the path taken
+     */
     public static List<LineSegment> AStar(Point startingPoint, Point goal, MutableValueGraph<Point, Double> graph){
+
         Logger logger = Logger.getInstance();
         List<Point> openList = new ArrayList<>();
         openList.add(startingPoint);
@@ -53,7 +65,7 @@ public class AStar {
         List<Point> totalPath = new ArrayList<>();
         totalPath.add(end);
         var current = end;
-        while (path.keySet().contains(current)){
+        while (path.containsKey(current)){
             current = path.get(current);
             totalPath.add(current);
         }
