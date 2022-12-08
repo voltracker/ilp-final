@@ -57,12 +57,19 @@ public class DeliverOrders {
         // for each restaurant find the path to and from appleton tower and set the appropriate restaurant's path to
         // that the approximated version of that path
         for (var restaurant : restaurants){
+            // pathfind from appleton to the restaurant
             List<LineSegment> from = AStar.AStar(appleton, restaurant.getPoint(), outGraph);
-            List<LineSegment> to = AStar.AStar(restaurant.getPoint(), appleton, outGraph);
             assert from != null;
-            restaurant.setPathFromAppleton(LineApproximation.approximatePath(from, this.noFlyZones));
-            assert to != null;
-            restaurant.setPathToAppleton(LineApproximation.approximatePath(to, this.noFlyZones));
+            // approximate the path
+            var fromApprox = LineApproximation.approximatePath(from, this.noFlyZones);
+            restaurant.setPathFromAppleton(fromApprox);
+            List<DroneMove> altTo = new ArrayList<>();
+            // set the path from the restaurant to appleton as the same as the path from appleton but flipped 180 degrees
+            for (int i = fromApprox.size(); i-- > 0;){
+                var angle = (fromApprox.get(i).angle() + 180) % 360;
+                altTo.add(new DroneMove(fromApprox.get(i).to(), fromApprox.get(i).from(), angle));
+            }
+            restaurant.setPathToAppleton(altTo);
         }
     }
 
