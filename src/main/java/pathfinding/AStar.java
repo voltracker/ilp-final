@@ -61,7 +61,7 @@ public class AStar {
         return null;
     }
 
-    public static List<LineSegment> getPath(Map<Point, Point> path, Point end){
+    private static List<LineSegment> getPath(Map<Point, Point> path, Point end){
         List<Point> totalPath = new ArrayList<>();
         totalPath.add(end);
         var current = end;

@@ -64,7 +64,7 @@ public class VisibilityGraph {
      * @param line2 LineSegment
      * @return boolean, true if they intersect, false otherwise
      */
-    public static boolean doesLineIntersect(LineSegment line1, LineSegment line2){
+    private static boolean doesLineIntersect(LineSegment line1, LineSegment line2){
         // use the Line2D class from the standard library to check if lines intersect
         boolean intersect = Line2D.linesIntersect(line1.p1().lng(), line1.p1().lat(),
                 line1.p2().lng(), line1.p2().lat(),
@@ -85,7 +85,7 @@ public class VisibilityGraph {
      * a line can be drawn directly from p to that node without intersecting a no-fly zone
      * @param p Point
      */
-    public void addEdgesForPoint(Point p){
+    private void addEdgesForPoint(Point p){
         for (Point node : visibilityGraph.nodes()){
             // as long as the name of the Point isn't the same as the point passed in
             // this prevents inserting edges within a no-fly zone
@@ -111,7 +111,7 @@ public class VisibilityGraph {
     /**
      * add the edges for all nodes in the graph
      */
-    public void buildGraph(){
+    private void buildGraph(){
         for (Point p : visibilityGraph.nodes()){
             addEdgesForPoint(p);
         }

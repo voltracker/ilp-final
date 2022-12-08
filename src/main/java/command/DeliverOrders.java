@@ -8,6 +8,7 @@ import pathfinding.VisibilityGraph;
 
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * class that executes each of the independent functions and creates the necessary files
@@ -52,7 +53,7 @@ public class DeliverOrders {
         // build visibility graph
         VisibilityGraph visGraph = new VisibilityGraph(this.noFlyZones, this.restaurants);
         // get graph for use in A*
-        MutableValueGraph outGraph = visGraph.getGraph();
+        MutableValueGraph<Point, Double> outGraph = visGraph.getGraph();
         // for each restaurant find the path to and from appleton tower and set the appropriate restaurant's path to
         // that the approximated version of that path
         for (var restaurant : restaurants){
@@ -126,7 +127,7 @@ public class DeliverOrders {
         for (var del : deliveries.values()){
             orders.addAll(del);
         }
-        // write the required data to the co
+        // write the required data to the corresponding file
         JsonWriter.writeDeliveries(orders, date);
         JsonWriter.writeFlightPathJSON(flightPath, date);
         JsonWriter.writeFlightPathGJSON(droneMoves, date);

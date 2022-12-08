@@ -1,10 +1,12 @@
 package command;
 
 import logging.Logger;
-import model.*;
+import model.Delivery;
 import model.MenuItem;
+import model.Order;
+import model.OrderOutcome;
+import model.Restaurant;
 
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -71,11 +73,7 @@ public class OrderValidation {
      * @return boolean, true if card number is valid, false otherwise
      */
     private static boolean validCardNumber(String cardNumber){
-        if (cardNumber.length() != 16){
-            return false;
-        } else {
-            return true;
-        }
+        return cardNumber.length() == 16;
     }
 
     /**
@@ -178,7 +176,7 @@ public class OrderValidation {
                 return new pickupRestaurantOutcome(OrderOutcome.ValidButNotDelivered, Optional.of(restaurants.get(restaurantIndex)));
             }
         } else {
-            // not sure why my Multiple suppliers check doesn't work so I catch it here instead
+            // not sure why my Multiple suppliers check doesn't work, so I catch it here instead
             return new pickupRestaurantOutcome(OrderOutcome.InvalidPizzaCombinationMultipleSuppliers, Optional.empty());
         }
     }
