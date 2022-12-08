@@ -17,17 +17,36 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class providing methods to write data structures to the corresponding json or geojson files
+ */
 public class JsonWriter {
+
+    /**
+     * Method that writes the generated visibility graph to a geojson file
+     * @param points list of Points, which are the nodes of the visgraph
+     * @param edges list of LineSegments, which are the edges of the visgraph
+     */
     public static void writeVisGraph(List<model.Point> points, List<LineSegment> edges){
         Logger logger = Logger.getInstance();
+
+        // list of MapBox features, used for easy serialisation to geojson
         List<Feature> features = new ArrayList<>();
+
+        // add all visgraph nodes to list of MapBox features
         for (model.Point point : points) {
             features.add(Feature.fromGeometry(Point.fromLngLat(point.lng(), point.lat())));
         }
+
+        // add all visgraph edges to list of MapBox features
         for (LineSegment edge : edges){
             features.add(Feature.fromGeometry(LineString.fromLngLats(edge.asMapBoxPoints())));
         }
+
+        // form a MapBox FeatureCollection from list of Features
         FeatureCollection output = FeatureCollection.fromFeatures(features);
+
+        // write to file
         try {
             FileWriter file = new FileWriter("visGraph.geojson");
             logger.logAction("JsonWriter.writeVisGraph(points, edges)", LogStatus.WRITE_VISGRAPH_SUCCESS);
@@ -39,29 +58,48 @@ public class JsonWriter {
         }
     }
 
+    /**
+     * method used to write the no-fly zones to a geojson file
+     * @param noFlyZones List of Polygons containing no-fly zones
+     */
     public static void writeNoFlyZones(List<Polygon> noFlyZones){
         Logger logger = Logger.getInstance();
-      List<Feature> features = new ArrayList<>();
-      for (var nfz : noFlyZones){
-        features.add(Feature.fromGeometry(nfz));
-      }
-      FeatureCollection output = FeatureCollection.fromFeatures(features);
-      try {
-          FileWriter file = new FileWriter("noFlyZones.geojson");
-          file.write(output.toJson());
-          file.close();
-          logger.logAction("JsonWriter.writeNoFlyZones(points, edges)", LogStatus.WRITE_NOFLYZONES_SUCCESS);
-      } catch (IOException e) {
-          logger.logAction("JsonWriter.writeVisGraph(points, edges)", LogStatus.JSON_WRITER_IOEXCEPTION);
-          e.printStackTrace();
-      }
+
+        // add all no-fly zones to a list of MapBox Features
+        List<Feature> features = new ArrayList<>();
+        for (var nfz : noFlyZones){
+            features.add(Feature.fromGeometry(nfz));
+        }
+
+        // create a FeatureCollection using list of Features
+        FeatureCollection output = FeatureCollection.fromFeatures(features);
+
+        // write to file
+        try {
+            FileWriter file = new FileWriter("noFlyZones.geojson");
+            file.write(output.toJson());
+            file.close();
+            logger.logAction("JsonWriter.writeNoFlyZones(points, edges)", LogStatus.WRITE_NOFLYZONES_SUCCESS);
+        } catch (IOException e) {
+            logger.logAction("JsonWriter.writeVisGraph(points, edges)", LogStatus.JSON_WRITER_IOEXCEPTION);
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * method for writing the final state of the deliveries to a json file with the corresponding date
+     * @param deliveries List of Deliveries
+     * @param date String containing the date on which the deliveries are going to take place
+     */
     public static void writeDeliveries(List<Delivery> deliveries, String date){
         Logger logger = Logger.getInstance();
-        //System.out.println(deliveries.stream().filter(d -> d.outcome() == OrderOutcome.Delivered).toList().size());
+
+        // create new Jackson ObjectMapper
         ObjectMapper mapper = new ObjectMapper();
+
+        // write to file
         try {
+            // serialise using Jackson ObjectMapper
             mapper.writeValue(new File("deliveries-" + date + ".json"), deliveries);
             logger.logAction("JsonWriter.writeDeliveries(points, edges)", LogStatus.WRITE_DELIVERIES_SUCCESS);
         } catch (IOException e){
@@ -70,6 +108,11 @@ public class JsonWriter {
         }
     }
 
+    /**
+     * Method for writing the flight path to a json file
+     * @param flightPath List of FlightPath objects, which are used to represent a drone move
+     * @param date String containing the date on which the given deliveries are going to take place
+     */
     public static void writeFlightPathJSON(List<FlightPath> flightPath, String date){
         Logger logger = Logger.getInstance();
         ObjectMapper mapper = new ObjectMapper();
@@ -82,10 +125,15 @@ public class JsonWriter {
         }
     }
 
-    public static void writeFlightPathGJSON(List<LineSegment> path, String date){
+    /**
+     * Method for writing the FlightPath to a geojson file
+     * @param flightPath List of LineSegments representing each move the drone completes
+     * @param date String containing the date on which the given deliveries are going to take place
+     */
+    public static void writeFlightPathGJSON(List<LineSegment> flightPath, String date){
         Logger logger = Logger.getInstance();
         List<Feature> features = new ArrayList<>();
-        for (LineSegment edge : path){
+        for (LineSegment edge : flightPath){
             features.add(Feature.fromGeometry(LineString.fromLngLats(edge.asMapBoxPoints())));
         }
         FeatureCollection output = FeatureCollection.fromFeatures(features);
@@ -93,14 +141,15 @@ public class JsonWriter {
             FileWriter file = new FileWriter("drone-" + date + ".geojson");
             file.write(output.toJson());
             file.close();
-            logger.logAction("JsonWriter.writeFlightPathGJSON(path)", LogStatus.WRITE_GJ_FLIGHT_PATH_SUCCESS);
+            logger.logAction("JsonWriter.writeFlightPathGJSON(flightPath)", LogStatus.WRITE_GJ_FLIGHT_PATH_SUCCESS);
         } catch (IOException e) {
-            logger.logAction("JsonWriter.writeFlightPathGJSON(path)", LogStatus.JSON_WRITER_IOEXCEPTION);
+            logger.logAction("JsonWriter.writeFlightPathGJSON(flightPath)", LogStatus.JSON_WRITER_IOEXCEPTION);
             System.err.println(e);
         }
 
     }
 
+    // enum used for representing log statuses
     private enum LogStatus{
         JSON_WRITER_IOEXCEPTION,
         WRITE_VISGRAPH_SUCCESS,
