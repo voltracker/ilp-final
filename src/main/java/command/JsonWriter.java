@@ -14,6 +14,9 @@ import model.LineSegment;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +51,10 @@ public class JsonWriter {
 
         // write to file
         try {
-            FileWriter file = new FileWriter("visGraph.geojson");
+            // create directory code from stackoverflow: https://stackoverflow.com/questions/3634853/how-to-create-a-directory-in-java
+            Path path = Paths.get("resultsfiles/");
+            Files.createDirectories(path);
+            FileWriter file = new FileWriter("resultsfiles/visGraph.geojson");
             logger.logAction("JsonWriter.writeVisGraph(points, edges)", LogStatus.WRITE_VISGRAPH_SUCCESS);
             file.write(output.toJson());
             file.close();
@@ -76,7 +82,10 @@ public class JsonWriter {
 
         // write to file
         try {
-            FileWriter file = new FileWriter("noFlyZones.geojson");
+            // create directory code from stackoverflow: https://stackoverflow.com/questions/3634853/how-to-create-a-directory-in-java
+            Path path = Paths.get("resultsfiles/");
+            Files.createDirectories(path);
+            FileWriter file = new FileWriter("resultsfiles/noFlyZones.geojson");
             file.write(output.toJson());
             file.close();
             logger.logAction("JsonWriter.writeNoFlyZones(points, edges)", LogStatus.WRITE_NOFLYZONES_SUCCESS);
@@ -99,8 +108,11 @@ public class JsonWriter {
 
         // write to file
         try {
+            // create directory code from stackoverflow: https://stackoverflow.com/questions/3634853/how-to-create-a-directory-in-java
+            Path path = Paths.get("resultsfiles/");
+            Files.createDirectories(path);
             // serialise using Jackson ObjectMapper
-            mapper.writeValue(new File("deliveries-" + date + ".json"), deliveries);
+            mapper.writeValue(new File("resultsfiles/deliveries-" + date + ".json"), deliveries);
             logger.logAction("JsonWriter.writeDeliveries(points, edges)", LogStatus.WRITE_DELIVERIES_SUCCESS);
         } catch (IOException e){
             logger.logAction("JsonWriter.writeDeliveries(points, edges)", LogStatus.JSON_WRITER_IOEXCEPTION);
@@ -117,7 +129,10 @@ public class JsonWriter {
         Logger logger = Logger.getInstance();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            mapper.writeValue(new File("flightpath-" + date + ".json"), flightPath);
+            // create directory code from stackoverflow: https://stackoverflow.com/questions/3634853/how-to-create-a-directory-in-java
+            Path path = Paths.get("resultsfiles/");
+            Files.createDirectories(path);
+            mapper.writeValue(new File("resultsfiles/flightpath-" + date + ".json"), flightPath);
             logger.logAction("JsonWriter.writeFlightPathJSON(flightPath, date)", LogStatus.WRITE_FLIGHT_PATH_SUCCESS);
         } catch (IOException e) {
             logger.logAction("JsonWriter.writeFlightPathJSON(flightPath, date)", LogStatus.JSON_WRITER_IOEXCEPTION);
@@ -138,7 +153,10 @@ public class JsonWriter {
         }
         FeatureCollection output = FeatureCollection.fromFeatures(features);
         try {
-            FileWriter file = new FileWriter("drone-" + date + ".geojson");
+            // create directory code from stackoverflow: https://stackoverflow.com/questions/3634853/how-to-create-a-directory-in-java
+            Path path = Paths.get("resultsfiles/");
+            Files.createDirectories(path);
+            FileWriter file = new FileWriter("resultsfiles/drone-" + date + ".geojson");
             file.write(output.toJson());
             file.close();
             logger.logAction("JsonWriter.writeFlightPathGJSON(flightPath)", LogStatus.WRITE_GJ_FLIGHT_PATH_SUCCESS);

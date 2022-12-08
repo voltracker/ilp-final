@@ -7,6 +7,7 @@ import model.*;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class RestClient {
             log.logAction("RestClient.getOrders()", LogStatus.IOEXCEPTION);
             System.err.println(e);
         }
-        return null;
+        return new ArrayList<>(){};
     }
 
     /**
@@ -76,7 +77,7 @@ public class RestClient {
             log.logAction("RestClient.getOrders(date)", LogStatus.GET_ORDERS_BY_DATE_BAD_DATE);
             System.err.println(e);
         }
-        return null;
+       return new ArrayList<>(){};
    }
 
     /**
@@ -95,7 +96,7 @@ public class RestClient {
             System.err.println(e);
             log.logAction("RestClient.getRestaurants()", LogStatus.IOEXCEPTION);
         }
-        return null;
+       return new ArrayList<>(){};
    }
 
     /**
@@ -146,7 +147,7 @@ public class RestClient {
             System.err.println(e);
             log.logAction("RestClient.getCentralArea()", LogStatus.IOEXCEPTION);
         }
-        return null;
+        return new ArrayList<>(){};
     }
 
    private enum LogStatus {

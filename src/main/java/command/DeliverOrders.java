@@ -6,6 +6,7 @@ import pathfinding.AStar;
 import pathfinding.LineApproximation;
 import pathfinding.VisibilityGraph;
 
+import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -35,10 +36,11 @@ public class DeliverOrders {
         // get current system time in nanoseconds
         this.startingTick = System.nanoTime();
         RestClient cli = new RestClient(baseURL);
-        this.date = date;
         this.restaurants = cli.getRestaurants();
         this.orders = OrderValidation.process(cli.getOrders(date), restaurants);
         this.noFlyZones = cli.getNoFlyZones();
+        this.date = date;
+
     }
 
     /**
@@ -120,12 +122,10 @@ public class DeliverOrders {
                 currentRestaurant = restaurantQueue.poll();
             }
         }
-
         // read the orders that were valid but not delivered
         for (var del : deliveries.values()){
             orders.addAll(del);
         }
-        System.out.println(totalMoves);
         // write the required data to the co
         JsonWriter.writeDeliveries(orders, date);
         JsonWriter.writeFlightPathJSON(flightPath, date);
@@ -136,7 +136,9 @@ public class DeliverOrders {
      * run the required methods to complete pathfinding and order delivery
      */
     public void go(){
-        this.pathFind();
-        this.deliver();
+        if (!this.orders.isEmpty()) {
+            this.pathFind();
+            this.deliver();
+        }
     }
 }

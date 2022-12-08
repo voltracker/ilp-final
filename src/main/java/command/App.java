@@ -22,11 +22,6 @@ public class App {
                 if (isValidURL(url)){
                     DeliverOrders main = new DeliverOrders(date, url);
                     main.go();
-                    Logger logger = Logger.getInstance();
-                    var logs = logger.getLog();
-                    for (var log : logs){
-                        System.out.println(log.toString());
-                    }
                 }
             } catch (DateTimeParseException e){
                 System.err.println(e);
