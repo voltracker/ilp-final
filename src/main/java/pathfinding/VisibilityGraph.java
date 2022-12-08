@@ -135,7 +135,7 @@ public class VisibilityGraph {
 
     /**
      * get the visibility graph as a MutableValueGraph (from Guava)
-     * @return MutableValueGraph<Point, Double>
+     * @return MutableValueGraph
      */
     public MutableValueGraph<Point, Double> getGraph(){
         return visibilityGraph;

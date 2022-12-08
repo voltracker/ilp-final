@@ -42,3 +42,6 @@ build/
 
 ## JSON ##
 *.json
+
+## JavaDoc ##
+JavaDoc/*

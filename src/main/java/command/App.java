@@ -1,14 +1,15 @@
+package command;
+
 import command.DeliverOrders;
 import logging.Logger;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class test {
+public class App {
     public static void main(String[] args){
         if (args.length != 3){
             System.err.println("Incorrect number of arguments, expected 3 got " + args.length);
