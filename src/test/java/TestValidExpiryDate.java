@@ -41,7 +41,6 @@ public class TestValidExpiryDate {
         }
         String year = Integer.toString(ThreadLocalRandom.current().nextInt(24, 31));
         String date = month + '/' + year;
-        System.out.println(date);
         Assertions.assertTrue(validExpiryDate(date));
     }
     @Test
