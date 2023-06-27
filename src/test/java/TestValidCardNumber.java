@@ -37,7 +37,7 @@ public class TestValidCardNumber {
         String testCardNo = "";
 
         int length = ThreadLocalRandom.current().nextInt(0, 100);
-        while (length == 16){
+        while (length >= 15 && length <= 16){
             length = ThreadLocalRandom.current().nextInt(0, 100);
         }
 
