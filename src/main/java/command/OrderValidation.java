@@ -67,13 +67,30 @@ public class OrderValidation {
         return checkPizzaOrder(order, restaurants);
     }
 
+    public static boolean validateCard(String cardNo, String CVV, String expiryMonth){
+        if (!validCardNumber(cardNo)){
+            return false;
+        }
+        if (!validCvv(CVV)){
+            return false;
+        }
+        if (!validExpiryDate(expiryMonth)){
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Method to check that the card number is the correct length
      * @param cardNumber card number to validate
      * @return boolean, true if card number is valid, false otherwise
      */
-    private static boolean validCardNumber(String cardNumber){
-        return cardNumber.length() == 16;
+    public static boolean validCardNumber(String cardNumber){
+        // matches if there are 16 digits in string ONLY
+        String regex = "^\\d{16}$";
+        Pattern pattern = Pattern.compile(regex);
+        // returns true if card number is valid, false otherwise
+        return pattern.matcher(cardNumber).find();
     }
 
     /**
@@ -81,7 +98,7 @@ public class OrderValidation {
      * @param expiryDate card's expiry date
      * @return boolean, true if expiry date is valid, false otherwise
      */
-    private static boolean validExpiryDate(String expiryDate){
+    public static boolean validExpiryDate(String expiryDate){
         Logger log = Logger.getInstance();
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
@@ -99,7 +116,7 @@ public class OrderValidation {
      * @param cvv cvv to validate
      * @return boolean, true if valid, false otherwise
      */
-    private static boolean validCvv(String cvv){
+    public static boolean validCvv(String cvv){
         // matches if there are either 3 or 4 digits in string ONLY
         String regex = "^\\d{3,4}$";
         Pattern pattern = Pattern.compile(regex);
