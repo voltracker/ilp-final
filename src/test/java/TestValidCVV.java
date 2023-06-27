@@ -57,10 +57,10 @@ public class TestValidCVV {
     @RepeatedTest(10)
     void TestRandomInvalidCVV(){
         String testCVV = "";
-        int length = ThreadLocalRandom.current().nextInt(5, 100);
-        // while (length == 3 || length == 4){
-        //     length = ThreadLocalRandom.current().nextInt(0, 100);
-        // }
+        int length = ThreadLocalRandom.current().nextInt(0, 100);
+        while (length >= 3 && length <= 4){
+            length = ThreadLocalRandom.current().nextInt(0, 100);
+        }
 
         for (int i = 0; i < length; i++) {
             int digit = ThreadLocalRandom.current().nextInt(20, 100);
