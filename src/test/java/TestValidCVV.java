@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ValidCVVTest {
+public class TestValidCVV {
     @Test
     void TestValidThreeDigitCVV(){
         String testCVV = "123";

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ValidCardNumberTest {
+public class TestValidCardNumber {
 
     @Test
     void TestValidCardNumber(){

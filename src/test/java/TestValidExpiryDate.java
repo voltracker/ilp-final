@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static command.OrderValidation.validExpiryDate;
 
-public class ValidExpiryDateTest {
+public class TestValidExpiryDate {
 
     @Test
     void validExpiryDateTest(){

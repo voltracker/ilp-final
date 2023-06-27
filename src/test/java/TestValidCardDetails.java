@@ -1,14 +1,12 @@
-import command.OrderValidation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static command.OrderValidation.validExpiryDate;
 import static command.OrderValidation.validateCard;
 
-public class ValidCardDetails {
+public class TestValidCardDetails {
 
     String generateValidExpiry(){
         int monthInt = ThreadLocalRandom.current().nextInt(1, 13);
